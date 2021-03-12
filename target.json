@@ -9,5 +9,11 @@
   "user": {
     "login": "lukasz",
     "password": "luk"
+  },
+  "db": {
+    "host": "127.0.0.1",
+    "name": "bugtracker",
+    "user": "admin",
+    "password": "password"
   }
 }

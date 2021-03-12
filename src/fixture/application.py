@@ -1,5 +1,9 @@
 from selenium import webdriver
+
+from src.fixture.navigation import NavigationHelper
+from src.fixture.project import ProjectHelper
 from src.fixture.session import SessionHelper
+
 
 class Application:
 
@@ -11,8 +15,12 @@ class Application:
         else:
             raise ValueError("Unrecognized browser")
 
+        self.wd.implicitly_wait(3)
+        self.wd.maximize_window()
         self.base_url = base_url
         self.session = SessionHelper(self)
+        self.navigation = NavigationHelper(self)
+        self.project = ProjectHelper(self)
 
     def open_home(self):
         wd = self.wd
