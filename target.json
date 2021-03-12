@@ -1,0 +1,13 @@
+{
+  "web": {
+    "baseUrl": "http://127.0.0.1/mantisbt-2.25.0/"
+  },
+  "webadmin": {
+    "login": "administrator",
+    "password": "root"
+  },
+  "user": {
+    "login": "lukasz",
+    "password": "luk"
+  }
+}
