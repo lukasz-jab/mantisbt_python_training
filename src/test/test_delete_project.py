@@ -1,4 +1,5 @@
 import random
+from time import time
 
 from src.model.project import Project
 
@@ -6,6 +7,9 @@ from src.model.project import Project
 def test_delete_project(app, admin, orm_db, check_ui):
     app.session.login(admin["username"], admin["password"])
     app.navigation.open_projects_board()
+    if len(orm_db.get_projects_list()) == 0:
+        project = Project(name="Projekt " + str(round(time())), description="Opis")
+        app.project.create_project(project)
     old_projects = orm_db.get_projects_list()
     project = random.choice(old_projects)
     app.project.delete_project(project)
