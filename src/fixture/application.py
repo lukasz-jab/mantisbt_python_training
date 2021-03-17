@@ -4,7 +4,8 @@ from src.fixture.james import JamesHelper
 from src.fixture.navigation import NavigationHelper
 from src.fixture.project import ProjectHelper
 from src.fixture.session import SessionHelper
-
+from src.fixture.mail import MailHelper
+from src.fixture.signup import SignupHelper
 
 class Application:
 
@@ -24,6 +25,8 @@ class Application:
         self.navigation = NavigationHelper(self)
         self.project = ProjectHelper(self)
         self.james = JamesHelper(self)
+        self.mail = MailHelper(self)
+        self.signup = SignupHelper(self)
 
     def open_home(self):
         wd = self.wd
