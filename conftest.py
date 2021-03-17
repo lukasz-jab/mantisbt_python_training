@@ -2,7 +2,7 @@ import json
 import os
 
 import pytest
-
+import ftputil
 from src.fixture.application import Application
 from src.fixture.orm import ORMFixture
 
@@ -20,12 +20,11 @@ def load_config(file):
 
 
 @pytest.fixture
-def app(request):
+def app(request, config):
     global fixture
     browser = request.config.getoption("--browser")
-    web_config = load_config(request.config.getoption("--target"))["web"]
     if fixture is None:
-        fixture = Application(browser=browser, base_url=web_config["baseUrl"])
+        fixture = Application(browser=browser, config=config)
     return fixture
 
 
@@ -62,12 +61,42 @@ def user(request):
 def check_ui(request):
     return request.config.getoption("--check_ui")
 
+
 @pytest.fixture(scope="session")
 def orm_db(request):
     orm_config = load_config(request.config.getoption("--target"))["db"]
     orm_fixture = ORMFixture(host=orm_config["host"], name=orm_config["name"],
                              user=orm_config["user"], password=orm_config["password"])
     return orm_fixture
+
+
+@pytest.fixture(scope="session")
+def config(request):
+    return load_config(request.config.getoption("--target"))
+
+
+@pytest.fixture(scope="session", autouse=True)
+def server_ftp(request, config):
+    install_server_configuration(config["ftp"]["host"], config["ftp"]["username"], config["ftp"]["password"])
+    def fin():
+        restore_server_configuration(config["ftp"]["host"], config["ftp"]["username"], config["ftp"]["password"])
+    request.addfinalizer(fin)
+
+
+def install_server_configuration(host, username, password):
+    with ftputil.FTPHost(host, username, password) as remote:
+        if remote.path.isfile("config_defaults_inc.php.bak"):
+            remote.remove("config_defaults_inc.php.bak")
+        if remote.path.isfile("config_defaults_inc.php"):
+            remote.rename("config_defaults_inc.php", "config_defaults_inc.php.bak")
+        remote.upload(os.path.join(os.path.dirname(__file__), "resources/config_defaults_inc.php"), "config_defaults_inc.php")
+
+def restore_server_configuration(host, username, password):
+    with ftputil.FTPHost(host, username, password) as remote:
+        if remote.path.isfile("config_defaults_inc.php.bak"):
+            if remote.path.isfile("config_defaults_inc.php"):
+                remote.remove("config_defaults_inc.php")
+            remote.rename("config_defaults_inc.php.bak", "config_defaults_inc.php")
 
 
 
