@@ -4,12 +4,14 @@ from src.model.project import Project
 
 
 def test_add_project(app, admin, orm_db, check_ui):
-    app.session.login(admin["username"], admin["password"])
-    old_projects = orm_db.get_projects_list()
+    user = admin["username"]
+    passw = admin["password"]
+    app.session.login(user, passw)
+    old_projects = app.soap.get_projects_list(user, passw)
     app.navigation.open_projects_board()
     project = Project(name="Projekt " + str(round(time())), description="Opis")
     app.project.create_project(project)
-    new_projects = orm_db.get_projects_list()
+    new_projects = app.soap.get_projects_list(user, passw)
     old_projects.append(project)
     if not check_ui:
         app.session.logout()

@@ -6,6 +6,8 @@ from src.fixture.project import ProjectHelper
 from src.fixture.session import SessionHelper
 from src.fixture.mail import MailHelper
 from src.fixture.signup import SignupHelper
+from src.fixture.soap import SoapHelper
+
 
 class Application:
 
@@ -27,6 +29,7 @@ class Application:
         self.james = JamesHelper(self)
         self.mail = MailHelper(self)
         self.signup = SignupHelper(self)
+        self.soap = SoapHelper(self)
 
     def open_home(self):
         wd = self.wd

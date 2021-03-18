@@ -5,15 +5,17 @@ from src.model.project import Project
 
 
 def test_delete_project(app, admin, orm_db, check_ui):
-    app.session.login(admin["username"], admin["password"])
+    user = admin["username"]
+    passw = admin["password"]
+    app.session.login(user, passw)
     app.navigation.open_projects_board()
     if len(orm_db.get_projects_list()) == 0:
         project = Project(name="Projekt " + str(round(time())), description="Opis")
         app.project.create_project(project)
-    old_projects = orm_db.get_projects_list()
+    old_projects = app.soap.get_projects_list(user, passw)
     project = random.choice(old_projects)
     app.project.delete_project(project)
-    new_projects = orm_db.get_projects_list()
+    new_projects = app.soap.get_projects_list(user, passw)
     old_projects.remove(project)
     if not check_ui:
         app.session.logout()
